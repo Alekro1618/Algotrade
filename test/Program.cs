@@ -99,7 +99,6 @@ namespace test
             foreach(var i in index) {
                 estimation.Add(Regression.PolyFunction(coefficients, i));
             }
-            Console.WriteLine("Regression ready");
 
             var plot = new ScottPlot.Plot();
             var convbars = new List<ScottPlot.OHLC>();
@@ -117,13 +116,6 @@ namespace test
 
             plot.SavePng("scatter.png",1200, 700);
         }
-
-        //public static async Task PolyRegr(){
-        //
-        //}
-
-        
-        
     }
 
 }
