@@ -12,9 +12,9 @@ namespace test
 {
     internal static class Program
     {
-        private const String KEY_ID = "PKIB6OAJK4XN1WPWUC2S";
+        private const String KEY_ID = "";
 
-        private const String SECRET_KEY = "ZaZXKstbaOkg6NnZLgLy6RacbRharfoOa36Nljkn";
+        private const String SECRET_KEY = "";
         public static async Task Main()
         {
             var key = new SecretKey(KEY_ID, SECRET_KEY);
@@ -95,6 +95,12 @@ namespace test
             }
             var index = Enumerable.Range(1, times.Count).Select(x => (double)x/times.Count).ToList();
             List<double> coefficients = Regression.PolyRegression(index, mean,8);
+            List<double> differential = Enumerable.Range(1, times.Count-1).Select(x => (double)x).ToList();
+
+            for(int i = 0; i < coefficients.Count-1; i++) {
+                differential[i] = differential[i] * coefficients[i+1];
+            }
+
             var estimation = new List<double>();
             foreach(var i in index) {
                 estimation.Add(Regression.PolyFunction(coefficients, i));
