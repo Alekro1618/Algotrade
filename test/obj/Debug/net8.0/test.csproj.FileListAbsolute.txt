@@ -25,3 +25,5 @@ C:\Users\korde\Documents\CSharp\Algotrade\test\bin\Debug\net8.0\runtimes\osx\nat
 C:\Users\korde\Documents\CSharp\Algotrade\test\bin\Debug\net8.0\runtimes\win-arm64\native\libSkiaSharp.dll
 C:\Users\korde\Documents\CSharp\Algotrade\test\bin\Debug\net8.0\runtimes\win-x64\native\libSkiaSharp.dll
 C:\Users\korde\Documents\CSharp\Algotrade\test\bin\Debug\net8.0\runtimes\win-x86\native\libSkiaSharp.dll
+C:\Users\korde\Documents\CSharp\Algotrade\test\bin\Debug\net8.0\DynamicInterop.dll
+C:\Users\korde\Documents\CSharp\Algotrade\test\bin\Debug\net8.0\RDotNet.dll

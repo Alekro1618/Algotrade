@@ -15,7 +15,6 @@ namespace test
         private const String KEY_ID = "PKIB6OAJK4XN1WPWUC2S";
 
         private const String SECRET_KEY = "ZaZXKstbaOkg6NnZLgLy6RacbRharfoOa36Nljkn";
-
         public static async Task Main()
         {
             var key = new SecretKey(KEY_ID, SECRET_KEY);
@@ -74,27 +73,13 @@ namespace test
             }
         }
 
-        public static async IPosition GetCurrentPrice(IAlpacaTradingClient client, string symbol) {
-            for (int i = 0; i<10; i++) {
-                try {
-                    var symbolPosition = await client.GetPositionAsync(symbol.Replace("/", string.Empty));
-                    return symbolPosition;
-                }
-                catch {
-                    Console.WriteLine("Error handling @{symbol} async. Trying again...");
-                    break;
-                }
-            }
-            return null;
-        }
-
         public static async Task DrawPlot(IClock clock, SecretKey key, string symbol) {
              var data_client = Environments.Paper
                 .GetAlpacaCryptoDataClient(key);
             var into = clock.TimestampUtc.AddMinutes(-15);
-            var from = into.AddDays(-1);
+            var from = into.AddDays(-4);
             var bars = await data_client.ListHistoricalBarsAsync(
-                new HistoricalCryptoBarsRequest(symbol, from, into, BarTimeFrame.Minute)
+                new HistoricalCryptoBarsRequest(symbol, from, into, BarTimeFrame.Hour)
             );
 
             var upper = new List<double>();
@@ -108,19 +93,25 @@ namespace test
                 mean.Add((double)(bar.High+bar.Low)/2);
                 times.Add(bar.TimeUtc);
             }
+            var index = Enumerable.Range(1, times.Count).Select(x => (double)x/times.Count).ToList();
+            List<double> coefficients = Regression.PolyRegression(index, mean,8);
+            var estimation = new List<double>();
+            foreach(var i in index) {
+                estimation.Add(Regression.PolyFunction(coefficients, i));
+            }
+            Console.WriteLine("Regression ready");
 
-            
-    
             var plot = new ScottPlot.Plot();
             var convbars = new List<ScottPlot.OHLC>();
             foreach(var bar in bars.Items) {
-                convbars.Add(new ScottPlot.OHLC((double)bar.Open, (double)bar.High, (double)bar.Low, (double)bar.Close, bar.TimeUtc, TimeSpan.FromMinutes(1)));
+                convbars.Add(new ScottPlot.OHLC((double)bar.Open, (double)bar.High, (double)bar.Low, (double)bar.Close, bar.TimeUtc, TimeSpan.FromHours(1)));
             }
 
 
             plot.Add.Candlestick(convbars);
             //plot.Add.Scatter(times, upper);
             //plot.Add.Scatter(times, lower);
+            plot.Add.Scatter(times, estimation);
             plot.Add.Scatter(times, mean);
             plot.Axes.DateTimeTicksBottom();
 
@@ -130,5 +121,9 @@ namespace test
         //public static async Task PolyRegr(){
         //
         //}
+
+        
+        
     }
+
 }
